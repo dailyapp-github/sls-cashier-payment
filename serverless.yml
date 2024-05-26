@@ -1,0 +1,136 @@
+org: daily
+app: daily-cashier
+service: cashier-payment-to-user
+frameworkVersion: "3"
+
+provider:
+    name: aws
+    # stage: dev
+    stage: prod
+    memorySize: 512
+    timeout: 90
+    logRetentionInDays: 3
+    runtime: nodejs18.x
+    region: ap-southeast-1
+    httpApi:
+        cors: true
+
+plugins:
+    - serverless-webpack
+    - serverless-domain-manager
+
+package:
+    individually: true
+
+custom:
+    customDomain:
+        # domainName: "api.dev.dailyapp.id"
+        domainName: "api.prod.dailyapp.id"
+        basePath: api-payment-user-v1
+        stage: ${self:provider.stage}
+        # certificateName: "*.api.dev.dailyapp.id"
+        certificateName: "*.api.prod.dailyapp.id"
+        hostedZoneId: ZL327KTPIQFUL
+        createRoute53Record: true
+        createRoute53IPv6Record: true
+        endpointType: "regional"
+        securityPolicy: tls_1_2
+        apiType: rest
+        autoDomain: false
+    webpack:
+        webpackConfig: "webpack.config.js"
+        packager: "npm"
+        includeModules:
+            forceExclude:
+                - aws-sdk
+
+functions:
+    cashierPaymentToUser:
+        handler: src/sls-cashier-create-payment.handler
+        environment:
+            # DB_NAME: development
+            DB_NAME: sgi
+        events:
+            - http:
+                  path: /cashier-payment
+                  method: post
+                  cors:
+                      origin: "*"
+                      headers:
+                          - Content-Type
+                          - X-Amz-Date
+                          - Authorization
+                          - X-Api-Key
+                          - X-Amz-Security-Token
+                          - X-Amz-User-Agent
+                          - Startlower
+                          - Text
+                          - Token
+                          - Access-Control-Allow-Headers
+                          - Access-Control-Allow-Origin
+                      allowCredentials: false
+                  authorizer:
+                      #   arn: arn:aws:lambda:ap-southeast-1:341817197245:function:authorizer-dev-authorizer
+                      arn: arn:aws:lambda:ap-southeast-1:341817197245:function:daily-v3-authorize-prod-AuthorizeV3Function-lJsBt36uQEtg
+                      managedExternally: false
+                      resultTtlInSeconds: 0
+
+    cashierVerifyPaymentToUser:
+        handler: src/sls-cashier-verified-payment.handler
+        environment:
+            # DB_NAME: development
+            DB_NAME: sgi
+        events:
+            - http:
+                  path: /cashier-payment-verify
+                  method: post
+                  cors:
+                      origin: "*"
+                      headers:
+                          - Content-Type
+                          - X-Amz-Date
+                          - Authorization
+                          - X-Api-Key
+                          - X-Amz-Security-Token
+                          - X-Amz-User-Agent
+                          - Startlower
+                          - Text
+                          - Token
+                          - Access-Control-Allow-Headers
+                          - Access-Control-Allow-Origin
+                      allowCredentials: false
+                  authorizer:
+                      #   arn: arn:aws:lambda:ap-southeast-1:341817197245:function:authorizer-dev-authorizer
+                      arn: arn:aws:lambda:ap-southeast-1:341817197245:function:daily-v3-authorize-prod-AuthorizeV3Function-lJsBt36uQEtg
+                      managedExternally: false
+                      resultTtlInSeconds: 0
+
+    cashierGetPayment:
+        handler: src/sls-cashier-get-payment.handler
+        environment:
+            # DB_NAME: development
+            DB_NAME: sgi
+        events:
+            - http:
+                  path: /cashier-payments
+                  method: get
+                  cors:
+                      origin: "*"
+                      headers:
+                          - Content-Type
+                          - X-Amz-Date
+                          - Authorization
+                          - X-Api-Key
+                          - X-Amz-Security-Token
+                          - X-Amz-User-Agent
+                          - Startlower
+                          - Text
+                          - Token
+                          - Access-Control-Allow-Headers
+                          - Access-Control-Allow-Origin
+                      allowCredentials: false
+                  authorizer:
+                      #   arn: arn:aws:lambda:ap-southeast-1:341817197245:function:authorizer-dev-authorizer
+                      arn: arn:aws:lambda:ap-southeast-1:341817197245:function:daily-v3-authorize-prod-AuthorizeV3Function-lJsBt36uQEtg
+                      managedExternally: false
+                      resultTtlInSeconds: 0
