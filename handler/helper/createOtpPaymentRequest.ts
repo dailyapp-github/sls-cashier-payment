@@ -3,7 +3,7 @@ import otpPaymentRequest from "../schemas/otpPaymentRequest";
 const createOtpPaymentRequest = async (body: any) => {
 	try {
 		// check by phone $ status
-		const checkRequest = await otpPaymentRequest.findOne({ phoneNumber: body.phoneNumber, isVerified: false });
+		const checkRequest = await otpPaymentRequest.findOne({ phoneNumber: body.phoneNumber });
 
 		// if not available or unavailable
 		if (!checkRequest) {
@@ -14,7 +14,7 @@ const createOtpPaymentRequest = async (body: any) => {
 			if (checkRequest.coin !== body.coin) {
 				const updateRequest = await otpPaymentRequest.findOneAndUpdate(
 					{ _id: checkRequest._id },
-					{ coin: body.coin, outletId: body.outletId },
+					{ coin: body.coin, outletId: body.outletId, code: getCode(), isVerified: false },
 					{ new: true, runValidators: true }
 				);
 				return updateRequest;
