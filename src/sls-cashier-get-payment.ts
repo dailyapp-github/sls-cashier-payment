@@ -10,10 +10,10 @@ export const handler = async (event: APIGatewayProxyEvent, context: Context) => 
 	try {
 		const outletId = event?.queryStringParameters?.outletId ? event.queryStringParameters.outletId : null;
 		const startdate = event?.queryStringParameters?.startdate
-			? moment(event.queryStringParameters.startdate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ss.SSS")
+			? moment(event.queryStringParameters.startdate, "YYYY-MM-DD").toISOString()
 			: moment().startOf("month");
 		const enddate = event?.queryStringParameters?.enddate
-			? moment(event.queryStringParameters.enddate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ss.SSS")
+			? moment(event.queryStringParameters.enddate, "YYYY-MM-DD").toISOString()
 			: moment().endOf("month");
 
 		if (outletId === null) {

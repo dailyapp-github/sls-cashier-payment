@@ -8,18 +8,17 @@ const createOtpPaymentRequest = async (body: any) => {
 		// if not available or unavailable
 		if (!checkRequest) {
 			body.code = getCode();
-			const post = await new otpPaymentRequest(body).save();
+			let post = await new otpPaymentRequest(body).save();
+			// post.code = undefined
 			return post;
 		} else {
-			if (checkRequest.coin !== body.coin) {
-				const updateRequest = await otpPaymentRequest.findOneAndUpdate(
+			
+				let updateRequest = await otpPaymentRequest.findOneAndUpdate(
 					{ _id: checkRequest._id },
 					{ coin: body.coin, outletId: body.outletId, code: getCode(), isVerified: false },
 					{ new: true, runValidators: true }
 				);
 				return updateRequest;
-			}
-			return checkRequest;
 		}
 	} catch (error) {
 		throw error;

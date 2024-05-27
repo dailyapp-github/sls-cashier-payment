@@ -15,10 +15,10 @@ export const connect = async (dbName: string) => {
 			.connect(
 				"mongodb+srv://dailybox:Dailybox12345!@dailybox-m3uld.mongodb.net/test?retryWrites=true&w=majority",
 				{
-					useUnifiedTopology: true,
+					// useUnifiedTopology: true,
 					dbName: dbName,
 					//  useFindAndModify: false,
-					useNewUrlParser: true,
+					// useNewUrlParser: true,
 					//  useCreateIndex: true,
 				} as ConnectOptions
 			)

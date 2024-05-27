@@ -12,8 +12,8 @@ const getOutletPayment = async (outletId: string, startdate: any, enddate: any) 
 						{ outlet: new mongoose.Types.ObjectId(outletId) },
 						{
 							createdAt: {
-								$gt: new Date(moment(startdate).startOf("day").format("YYYY-MM-DD[T00:00:00.000Z]")),
-								$lt: new Date(moment(enddate).endOf("day").format("YYYY-MM-DD[T00:00:00.000Z]")),
+								$gt: new Date(moment(startdate).startOf("date").toISOString()),
+								$lt: new Date(moment(enddate).endOf("date").toISOString()),
 							},
 						},
 					],

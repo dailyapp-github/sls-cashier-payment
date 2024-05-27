@@ -14,11 +14,13 @@ export const handler = async (event: APIGatewayProxyEvent, context: Context) => 
 	try {
 		console.log("YEAY");
 		const body = event.body ? JSON.parse(event.body) : null;
+		console.log("BODY", body);
+		
 		if (!body || !body.code || !body.outletId) {
 			return callbackResponse(2000, {}, "body request is required", "body request is required");
 		}
 
-		const request = await getOtpPaymentToVerified(body.code);
+		const request = await getOtpPaymentToVerified(body.code, body.phoneNumber);
 		if (!request) {
 			return callbackResponse(2001, {}, "code not found", "code not found");
 		}
