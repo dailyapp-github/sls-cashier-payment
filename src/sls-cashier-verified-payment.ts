@@ -7,6 +7,7 @@ import getOtpPaymentToVerified from "../handler/helper/getOtpPaymentToVerified";
 import getUserByPhone from "../handler/helper/getUserByPhone";
 import verifyPayment from "../handler/helper/verifyPaymentCashier";
 import otpPaymentRequestVerified from "../handler/helper/updateOtpPaymentToVerified";
+import DailyUser from "../handler/schemas/dailyUser";
 
 export const handler = async (event: APIGatewayProxyEvent, context: Context) => {
 	context.callbackWaitsForEmptyEventLoop === false;
@@ -28,6 +29,10 @@ export const handler = async (event: APIGatewayProxyEvent, context: Context) => 
 		const user = await getUserByPhone(request.phoneNumber);
 		if (!user) {
 			return callbackResponse(2002, {}, "phone number not registered", "phone number not registered");
+		}
+
+		if(user.user.phone.verified === false){
+			await DailyUser.findByIdAndUpdate({_id: user.user._id}, {"phone.verified": true}, {new: true, runValidators: true})
 		}
 
 		const outlet = await getOutletById(body.outletId);
