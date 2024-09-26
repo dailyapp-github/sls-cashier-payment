@@ -30,6 +30,10 @@ export const handler = async (event: APIGatewayProxyEvent, context: Context) => 
 			return callbackResponse(2002, {}, "phone number not registered", "phone number not registered");
 		}
 
+		if(user.isBanned){
+			return callbackResponse(2004, {}, "user has been banned", "user has been banned");
+		}
+
 		const outlet = await getOutletById(body.outletId);
 		if (!outlet) {
 			return callbackResponse(2003, {}, "outlet not found", "outlet not found");
